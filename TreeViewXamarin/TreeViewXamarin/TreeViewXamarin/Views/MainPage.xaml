@@ -1,0 +1,46 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:local="clr-namespace:TreeViewXamarin"
+             xmlns:treeView="clr-namespace:Syncfusion.XForms.TreeView;assembly=Syncfusion.SfTreeView.XForms" 
+             xmlns:treeViewEngine="clr-namespace:Syncfusion.TreeView.Engine;assembly=Syncfusion.SfTreeView.XForms" xmlns:checkBox="clr-namespace:Syncfusion.XForms.Buttons;assembly=Syncfusion.Buttons.XForms"
+             x:Class="TreeViewXamarin.MainPage">
+
+    <ContentPage.BindingContext>
+        <local:FileManagerViewModel x:Name="viewModel"/>
+    </ContentPage.BindingContext>
+
+    <ContentPage.Resources>
+        <ResourceDictionary>
+            <local:CheckBoxVisibilityConverter x:Key="checkBoxVisibilityConverter"/>
+        </ResourceDictionary>
+    </ContentPage.Resources>
+
+    <StackLayout>
+        <treeView:SfTreeView x:Name="treeView"
+                         ItemTemplateContextType="Node"
+                         CheckBoxMode="Recursive" 
+                         AutoExpandMode="RootNodesExpanded"
+                         CheckedItems="{Binding CheckedItems}"
+                         ItemsSource="{Binding Folders}">
+            <treeView:SfTreeView.HierarchyPropertyDescriptors>
+                <treeViewEngine:HierarchyPropertyDescriptor TargetType="{x:Type local:Folder}" ChildPropertyName="SubFolder"/>
+                <treeViewEngine:HierarchyPropertyDescriptor TargetType="{x:Type local:SubFolder}" ChildPropertyName="Files"/>
+                <treeViewEngine:HierarchyPropertyDescriptor TargetType="{x:Type local:File}" ChildPropertyName="SubFiles"/>
+            </treeView:SfTreeView.HierarchyPropertyDescriptors>
+
+            <treeView:SfTreeView.ItemTemplate>
+                <DataTemplate>
+                    <Grid Padding="5">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="40"/>
+                            <ColumnDefinition Width="*"/>
+                        </Grid.ColumnDefinitions>
+                        <checkBox:SfCheckBox x:Name="CheckBox" IsChecked="{Binding IsChecked, Mode=TwoWay}" CornerRadius="2" IsVisible="{Binding Level, Converter={StaticResource checkBoxVisibilityConverter}}"/>
+                        <Label Text="{Binding Content.FileName}" VerticalOptions="CenterAndExpand" HorizontalOptions="StartAndExpand" Grid.Column="1"/>
+                    </Grid>
+                </DataTemplate>
+            </treeView:SfTreeView.ItemTemplate>
+        </treeView:SfTreeView>
+    </StackLayout>
+</ContentPage>
